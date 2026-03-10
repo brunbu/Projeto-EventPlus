@@ -16,7 +16,7 @@ public partial class EventContext : DbContext
     {
     }
 
-    public virtual DbSet<Comentario> Comentarios { get; set; }
+    public virtual DbSet<ComentarioEvento> Comentarios { get; set; }
 
     public virtual DbSet<Evento> Eventos { get; set; }
 
@@ -36,7 +36,7 @@ public partial class EventContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Comentario>(entity =>
+        modelBuilder.Entity<ComentarioEvento>(entity =>
         {
             entity.HasKey(e => e.IdComentario).HasName("PK__Comentar__DDBEFBF975792284");
 

@@ -1,0 +1,18 @@
+﻿using EventPlus.WebAPI.Models;
+
+namespace EventPlus.WebAPI.Interfaces;
+
+public interface IEventoRepository
+{
+    object TipoEvento { get; set; }
+
+    void Cadatrar(Evento evento);
+
+    List<Evento> Listar();
+    void Deletar (Guid id);
+    void Atualizar (Guid id, Evento evento);
+    List<Evento> ListarPorId(Guid id);
+    List<Evento> ProximosEventoS();
+    Evento BuscarPorId(Guid id);
+    void SaveChanges();
+}

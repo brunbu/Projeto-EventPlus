@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 namespace EventPlus.WebAPI.Models;
 
@@ -14,6 +15,7 @@ public partial class Instituicao
     [Key]
     public Guid IdInstituicao { get; set; }
 
+    [JsonIgnore]
     [StringLength(100)]
     [Unicode(false)]
     public string NomeFantasia { get; set; } = null!;
@@ -28,5 +30,6 @@ public partial class Instituicao
     public string Cnpj { get; set; } = null!;
 
     [InverseProperty("IdInstituicaoNavigation")]
+    [JsonIgnore]
     public virtual ICollection<Evento> Eventos { get; set; } = new List<Evento>();
 }
