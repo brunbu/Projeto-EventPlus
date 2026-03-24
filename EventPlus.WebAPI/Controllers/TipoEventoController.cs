@@ -80,12 +80,17 @@ namespace EventPlus.WebAPI.Controllers
         /// <param name="tipoEvento">tipo de evento com os dados atualizados</param>
         /// <returns></returns>
         [HttpPut("{id}")]
-        public IActionResult Atualizar(Guid id, TipoEvento tipoEvento)
+        public IActionResult Atualizar(Guid id, TipoEventoDTO tipoEvento)
         {
             try
             {
-                _tipoEventoRepository.Atualizar(id, tipoEvento);
-                return StatusCode(204, tipoEvento);
+                var TipoEventoAtualizado = new TipoEvento
+                {
+                    Titulo = tipoEvento.Titulo!
+                };
+
+                _tipoEventoRepository.Atualizar(id, TipoEventoAtualizado);
+                return StatusCode(204, TipoEventoAtualizado);
             }
             catch (Exception erro)
             {

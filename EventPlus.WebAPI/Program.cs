@@ -1,24 +1,74 @@
+using Azure.AI.ContentSafety;
 using EventPlus.WebAPI.BdContEvent;
 using EventPlus.WebAPI.Interfaces;
 using EventPlus.WebAPI.Repositories;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using System.ComponentModel;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<EventContext>(opitions =>
-    opitions.UseSqlServer
-    (builder.Configuration.GetConnectionString
-    ("DefaultConnection")));
+var endpoint = "";
+var apiKey = "";
+builder.Services.AddSingleton(new ContentSafetyClient(
+    new Uri(endpoint),
+    new Azure.AzureKeyCredential(apiKey)
+));
+
+var client = new ContentSafetyClient(new Uri(endpoint), new Azure.AzureKeyCredential(apiKey));
+
+builder.Services.AddDbContext<EventContext>(opitionsAction =>
+{
+opitionsAction.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 builder.Services.AddScoped<ITipoEventoRepository, TipoEventoRepository>();
+builder.Services.AddScoped<IInstituicaoRepository, InstituicaoRepository>();
+builder.Services.AddScoped<ITipoUsuarioRepository, TipoUsuarioRepository>();
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddScoped<IEventoRepository, EventoRepository>();
+builder.Services.AddScoped<IPresencaRepository, PresencaRepository>();
+builder.Services.AddScoped<IComentarioEventoRepository, ComentarioEventoRepository>();
+
+
+//adiciona o ser viço de jwt Bearer (metodo de autenticação)
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultChallengeScheme = "JwtBearer";
+    options.DefaultAuthenticateScheme = "JwtBearer";
+})
+.AddJwtBearer("JwtBearer", options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        //valida quem está solucionando
+        ValidateIssuer = true,
+        //valida quem está solucionando
+        ValidateAudience = true,
+        //valida se o tempo de expiração será validado
+        ValidateLifetime = true,
+        //forma de criptografia e valida a chave de autenticação
+        IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("EventPlus-chave-autenticacao-webapi-dev")),
+
+        //valida o tempo de expiração do token
+        ClockSkew = TimeSpan.FromMinutes(5),
+
+        //nome do issuer (de onde está vindo)
+        ValidIssuer = "api_event",
+
+        //nome do audience (para onde ele está indo)
+        ValidAudience = "api_event"
+
+    };
+});
 
 builder.Services.AddEndpointsApiExplorer();
 
@@ -46,7 +96,7 @@ builder.Services.AddSwaggerGen(options =>
     {
         Name = "Authorization",
         Type = SecuritySchemeType.Http,
-        Scheme = "bearer",
+        Scheme = "Bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
         Description = "Insira o token JWT"
@@ -56,7 +106,7 @@ builder.Services.AddSwaggerGen(options =>
     OpenApiSecurityRequirement
     {
 
-        [new OpenApiSecuritySchemeReference("Berear", document)] = Array.Empty<string>().ToList()
+        [new OpenApiSecuritySchemeReference("Bearer", document)] = Array.Empty<string>().ToList()
 
     });
     

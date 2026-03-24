@@ -14,8 +14,7 @@ public partial class Instituicao
 {
     [Key]
     public Guid IdInstituicao { get; set; }
-
-    [JsonIgnore]
+    
     [StringLength(100)]
     [Unicode(false)]
     public string NomeFantasia { get; set; } = null!;

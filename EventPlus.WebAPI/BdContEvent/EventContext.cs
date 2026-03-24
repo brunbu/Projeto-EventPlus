@@ -18,7 +18,7 @@ public partial class EventContext : DbContext
 
     public virtual DbSet<ComentarioEvento> Comentarios { get; set; }
 
-    public virtual DbSet<Evento> Eventos { get; set; }
+    public virtual DbSet<Evento> Evento { get; set; }
 
     public virtual DbSet<Instituicao> Instituicaos { get; set; }
 

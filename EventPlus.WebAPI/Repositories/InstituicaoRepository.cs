@@ -18,9 +18,12 @@ public class InstituicaoRepository : IInstituicaoRepository
 
         if (instituicaoBuscada != null)
         {
-            instituicaoBuscada.NomeFantasia = instituicao.NomeFantasia;
-            instituicaoBuscada.Cnpj = instituicao.Cnpj;
-            instituicaoBuscada.Endereço = instituicao.Endereço;
+            instituicaoBuscada.NomeFantasia = String.IsNullOrWhiteSpace (instituicao.NomeFantasia) ? instituicao.NomeFantasia : instituicao.NomeFantasia;
+
+            instituicaoBuscada.Cnpj =String.IsNullOrWhiteSpace (instituicao.Cnpj) ? instituicaoBuscada.Cnpj : instituicaoBuscada.Cnpj;
+
+            instituicaoBuscada.Endereço = String.IsNullOrWhiteSpace (instituicao.Endereço) ? instituicao.Endereço : instituicao.Endereço;
+           
             _context.SaveChanges();
         }
     }
